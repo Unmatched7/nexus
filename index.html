@@ -1288,18 +1288,27 @@ function qtToggle(id){const t=DB.tarefas.find(x=>x.id===id);if(t){t.st=t.st==='d
    EMPRÉSTIMOS — HELPERS
 ════════════════════════════ */
 function calcJuros(emp){
-  const hoje=new Date(),emp_dt=new Date(emp.dataEmp);
-  let m=((hoje.getFullYear()-emp_dt.getFullYear())*12+(hoje.getMonth()-emp_dt.getMonth()));
-  if(m<0)m=0;
-  const taxa=(emp.tipo==='anual'?emp.juros/12:emp.juros)/100;
-  return Math.max(0,emp.valor*(Math.pow(1+taxa,m)-1));
+
+  const inicio = new Date(emp.dataEmp);
+  const venc = new Date(emp.dataVenc);
+
+  let meses =
+    ((venc.getFullYear() - inicio.getFullYear()) * 12) +
+    (venc.getMonth() - inicio.getMonth());
+
+  if (meses < 0) meses = 0;
+
+  const taxa = (
+    emp.tipo === 'anual'
+      ? emp.juros / 12
+      : emp.juros
+  ) / 100;
+
+  return Math.max(
+    0,
+    emp.valor * (Math.pow(1 + taxa, meses) - 1)
+  );
 }
-function calcTotal(emp){const pago=emp.pagamentos.reduce((a,p)=>a+p.val,0);return Math.max(0,emp.valor+calcJuros(emp)-pago);}
-function isOverdue(emp){return emp.status!=='quitado'&&new Date()>new Date(emp.dataVenc);}
-function daysOverdue(emp){return Math.max(0,Math.floor((new Date()-new Date(emp.dataVenc))/(864e5)));}
-function daysUntil(emp){return Math.max(0,Math.floor((new Date(emp.dataVenc)-new Date())/(864e5)));}
-function cliName(id){return DB.clientes.find(c=>c.id===id)?.nome||'?';}
-function cliInit(id){const c=DB.clientes.find(x=>x.id===id);return c?c.nome.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase():'?';}
 
 /* ════ EMPRÉSTIMOS — RENDER ════ */
 function setEmpTab(t){empTab=t;const tabs=document.querySelectorAll('#emp-tabs .tab');tabs.forEach((el,i)=>el.classList.toggle('active',['ativos','quitados','clientes'][i]===t));rEmpBody();}
