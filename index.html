@@ -1232,6 +1232,30 @@ function toast(msg, type='ok') {
   }, 2800);
 }
 
+
+/* ════ MODAL ════ */
+
+function openModal(title, content, footer, cls='') {
+
+  document.getElementById('mtitle').innerHTML = title;
+  document.getElementById('mcontent').innerHTML = content;
+  document.getElementById('mfoot').innerHTML = footer;
+
+  document.getElementById('mbox').className = 'modal ' + (cls || '');
+
+  document.getElementById('overlay').classList.add('on');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('on');
+}
+
+function handleOv(ev) {
+  if (ev.target === document.getElementById('overlay')) {
+    closeModal();
+  }
+}
+
 /* ════════════════════════════
    DASHBOARD
 ════════════════════════════ */
