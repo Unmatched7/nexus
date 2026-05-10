@@ -1198,15 +1198,39 @@ function updBadges(){
 
 /* ════ TOAST ════ */
 let tT;
-function toast(msg,type='ok'){const el=document.getElementById('toast');document.getElementById('tmsg').textContent=msg;el.className='toast '+type+' on';el.querySelector('i').className='ti '+(type==='ok'?'ti-circle-check':type==='err'?'ti-circle-x':'ti-info-circle');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('on'),2800);}
 
-/* ════ MODAL ════ */
-function openModal(title,content,footer,cls=''){
-  document.getElementById('mtitle').innerHTML=title;document.getElementById('mcontent').innerHTML=content;document.getElementById('mfoot').innerHTML=footer;
-  document.getElementById('mbox').className='modal '+(cls||'');document.getElementById('overlay').classList.add('on');
+function toast(msg, type='ok') {
+
+  const el = document.getElementById('toast');
+  const tmsg = document.getElementById('tmsg');
+
+  if (!el || !tmsg) {
+    console.warn('Toast element não encontrado');
+    return;
+  }
+
+  tmsg.textContent = msg;
+
+  el.className = 'toast ' + type + ' on';
+
+  const icon = el.querySelector('i');
+
+  if (icon) {
+    icon.className = 'ti ' + (
+      type === 'ok'
+        ? 'ti-circle-check'
+        : type === 'err'
+        ? 'ti-circle-x'
+        : 'ti-info-circle'
+    );
+  }
+
+  clearTimeout(tT);
+
+  tT = setTimeout(() => {
+    el.classList.remove('on');
+  }, 2800);
 }
-function closeModal(){document.getElementById('overlay').classList.remove('on');}
-function handleOv(ev){if(ev.target===document.getElementById('overlay'))closeModal();}
 
 /* ════════════════════════════
    DASHBOARD
