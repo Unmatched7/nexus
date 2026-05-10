@@ -1004,33 +1004,32 @@ async function pushToSupabase(force = false) {
   if (!force && !_supabaseReady) return false;
 
   const uid = getUserId();
-  const now = Date.now();
+const now = Date.now();
 
-  try {
-    const { error } = await sb
-      .from('nexus_data')
-      .upsert({
-        user_id: uid,
-        payload: JSON.stringify(DB),
-        updated_at: new Date(now).toISOString()
-      }, { onConflict: 'user_id' });
+try {
+  console.log(uid);
+  console.log(DB);
 
-    if (error) {
-      console.warn('Supabase push error:', error.message);
-      updSyncStatus('error');
-      return false;
-    }
+  const { error } = await sb
+    .from('nexus_data')
+    .upsert({
+      user_id: FIXED_USER_ID,
+      payload: JSON.stringify(DB),
+      updated_at: new Date(now).toISOString()
+    }, { onConflict: 'user_id' });
 
-    localStorage.setItem('nexus_last_save', now.toString());
-    updSyncStatus('cloud');
-    _retryCount = 0;
-    return true;
-
-  } catch(e) {
-    console.warn('pushToSupabase exception:', e);
-    updSyncStatus('error');
-    return false;
+  if (error) {
+    console.error(error);
   }
+
+  localStorage.setItem('nexus_last_save', now.toString());
+  updSyncStatus('cloud');
+  _retryCount = 0;
+
+  return true;
+
+} catch (err) {
+  console.error(err);
 }
 
 function scheduleRetry() {
